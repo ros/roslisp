@@ -1,0 +1,24 @@
+<stack>
+  <name>roslisp</name>
+  <version>1.8.15</version>
+  <description brief="A Lisp client library for ROS">
+    This package is a Lisp client library for ROS, the Robot Operating System.
+  </description>
+  <author>Bhaskara Marthi</author>
+  <author>Brian Gerkey</author>
+  <author email="moesenle@cs.tum.edu">Lorenz Moesenlechner</author>
+  <author>Thibault Kruse</author>
+  <maintainer email="moesenle@cs.tum.edu">Lorenz Moesenlechner</maintainer>
+  <license>BSD</license>
+  <copyright>Willow Garage</copyright>
+  <url>http://www.ros.org/wiki/roslisp</url>
+  <review status="experimental" notes="" />
+
+  <!-- We shouldn't need any build dependencies since we are not
+       compiling anything. -->
+  <depends>langs</depends>
+  <depends>python-yaml</depends>
+  <depends>ros</depends>
+  <depends>rosgraph_msgs</depends>
+  <depends>sbcl</depends>
+</stack>
