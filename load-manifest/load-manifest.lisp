@@ -250,14 +250,14 @@ package."
       (when debug-print (format t "~&asdf-ros-search not invoked since *current-ros-package* is ~a" *current-ros-package*))))
 
 (asdf:initialize-source-registry
- (let ((roslisp-package-directory (sb-posix:getenv "ROSLISP_PACKAGE_DIRECTORY"))
-       (catkin-source-directory (sb-posix:getenv "CATKIN_SOURCE_DIR"))
+ (let ((roslisp-package-directories (sb-posix:getenv "ROSLISP_PACKAGE_DIRECTORIES"))
        (ros-package-path (sb-posix:getenv "ROS_PACKAGE_PATH")))
    `(:source-registry
-     ,@(when roslisp-package-directory
-         `((:tree ,roslisp-package-directory)))
-     ,@(when catkin-source-directory
-         `((:tree ,catkin-source-directory)))
+     ,@(when roslisp-package-directories
+         (mapcan (lambda (path)
+                   (when (and path (> (length path) 0))
+                     `((:tree ,path))))
+                 (asdf:split-string ros-package-path :separator '(#\:))))
      ,@(when ros-package-path
          (mapcan (lambda (path)
                    (when (and path (> (length path) 0))
