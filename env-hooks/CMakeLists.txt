@@ -1,1 +1,1 @@
-catkin_add_env_hooks(99.roslisp SHELLS sh)
+catkin_add_env_hooks(99.roslisp SHELLS all)
