@@ -25,6 +25,10 @@ endforeach()
 
 install(FILES manifest.xml
     DESTINATION share/${PROJECT_NAME})
+install(FILES rosbuild/roslisp.cmake
+    DESTINATION share/${PROJECT_NAME}/rosbuild)
+install(PROGRAMS rosbuild/scripts/genmsg_lisp.py
+    DESTINATION share/${PROJECT_NAME}/rosbuild/scripts)
 
 install(DIRECTORY scripts
   DESTINATION share/${PROJECT_NAME}
