@@ -10,13 +10,6 @@ else()
     @CMAKE_INSTALL_PREFIX@/share/common-lisp/ros/roslisp/scripts)
 endif()
 
-macro(roslisp_package ARG_NAME)
-  install(CODE
-    "file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/share/common-lisp/ros)
-     execute_process(
-       COMMAND ln -s ../../${ARG_NAME} ${CMAKE_INSTALL_PREFIX}/share/common-lisp/ros/${ARG_NAME})")
-endmacro()
-
 # Build up a list of executables, in order to make them depend on each
 # other, to avoid building them in parallel, because it's not safe to do
 # that.

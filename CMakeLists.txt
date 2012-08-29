@@ -13,10 +13,6 @@ configure_file(${roslisp_SOURCE_DIR}/cmake/roslisp-extras.cmake.in
   ${roslisp_BINARY_DIR}/cmake/roslisp-extras.cmake @ONLY)
 include(${roslisp_BINARY_DIR}/cmake/roslisp-extras.cmake)
 
-# use roslisp_package to make the package available in roslisp's asdf
-# tree.
-roslisp_package(roslisp)
-
 foreach(dir
     asdf
     load-manifest
