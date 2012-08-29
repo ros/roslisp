@@ -23,8 +23,12 @@ foreach(dir
       PATTERN "genmsg_lisp.py" EXCLUDE)
 endforeach()
 
+install(FILES manifest.xml
+    DESTINATION share/${PROJECT_NAME})
+
 install(DIRECTORY scripts
   DESTINATION share/${PROJECT_NAME}
   USE_SOURCE_PERMISSIONS
   PATTERN ".svn" EXCLUDE
   PATTERN "genmsg_lisp.py" EXCLUDE)
+
