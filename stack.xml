@@ -19,6 +19,6 @@
   <depends>langs</depends>
   <depends>python-yaml</depends>
   <depends>ros</depends>
-  <depends>rosgraph_msgs</depends>
+  <depends>ros_comm</depends>
   <depends>sbcl</depends>
 </stack>

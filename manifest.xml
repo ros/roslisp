@@ -7,6 +7,7 @@
   <license>BSD</license>
   <review status="experimental" notes="" />
   <depend package="roslang" />
+  <depend package="rosgraph_msgs" />
   <export>
     <roslang cmake="${prefix}/rosbuild/roslisp.cmake" />
   </export>
