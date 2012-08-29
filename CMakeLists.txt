@@ -8,11 +8,6 @@ catkin_project(roslisp
   CFG_EXTRAS roslisp-extras.cmake)
 add_subdirectory(env-hooks)
 
-# HACK(lorenz): how can wie already use roslisp-extras.cmake here?
-configure_file(${roslisp_SOURCE_DIR}/cmake/roslisp-extras.cmake.in
-  ${roslisp_BINARY_DIR}/cmake/roslisp-extras.cmake @ONLY)
-include(${roslisp_BINARY_DIR}/cmake/roslisp-extras.cmake)
-
 foreach(dir
     asdf
     load-manifest
