@@ -257,7 +257,7 @@ package."
          (mapcan (lambda (path)
                    (when (and path (> (length path) 0))
                      `((:tree ,path))))
-                 (asdf:split-string ros-package-path :separator '(#\:))))
+                 (asdf:split-string roslisp-package-directories :separator '(#\:))))
      ,@(when ros-package-path
          (mapcan (lambda (path)
                    (when (and path (> (length path) 0))
