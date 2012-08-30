@@ -14,8 +14,8 @@
   <url>http://www.ros.org/wiki/roslisp</url>
   <review status="experimental" notes="" />
 
-  <!-- We shouldn't need any build dependencies since we are not
-       compiling anything. -->
+  <build_depends>catkin</build_depends>
+
   <depends>langs</depends>
   <depends>python-yaml</depends>
   <depends>ros</depends>
