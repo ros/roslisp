@@ -36,3 +36,9 @@ install(DIRECTORY scripts
   PATTERN ".svn" EXCLUDE
   PATTERN "genmsg_lisp.py" EXCLUDE)
 
+# install legacy infrastructure needed by rosbuild
+install(FILES rosbuild/roslisp.cmake
+        DESTINATION ${CATKIN_PROJECT_SHARE_DESTINATION}/rosbuild)
+install(PROGRAMS
+        rosbuild/scripts/genmsg_lisp.py
+        DESTINATION ${CATKIN_PROJECT_SHARE_DESTINATION}/rosbuild/scripts)
