@@ -2,7 +2,7 @@
   <name>roslisp</name>
   <version>1.9.7</version>
   <description>Lisp client library for ROS, the Robot Operating System.</description>
-  <maintainer email="moesenle@cs.tum.edu">Lorenz Moesenlechner</author>
+  <maintainer email="moesenle@cs.tum.edu">Lorenz Moesenlechner</maintainer>
   <license>BSD</license>
 
   <author>Bhaskara Marthi</author>
