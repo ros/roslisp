@@ -2,18 +2,21 @@
   <name>roslisp</name>
   <version>1.9.7</version>
   <description>Lisp client library for ROS, the Robot Operating System.</description>
-  <maintainer email="dthomas@willowgarage.com">Dirk Thomas</maintainer>
+  <maintainer email="moesenle@cs.tum.edu">Lorenz Moesenlechner</author>
   <license>BSD</license>
 
   <author>Bhaskara Marthi</author>
   <author>Brian Gerkey</author>
-  <author>Lorenz Mösenlechner</author>
+  <author email="moesenle@cs.tum.edu">Lorenz Moesenlechner</author>
   <author>Thibault Kruse</author>
 
   <url>http://ros.org/wiki/roslisp</url>
 
   <build_depend>catkin</build_depend>
   <run_depend>roslang</run_depend>
+  <run_depend>sbcl</run_depend>
+  <run_depend>ros</run_depend>
+  <run_depend>ros_comm</run_depend>
 
   <export>
     <roslang cmake="${prefix}/rosbuild/roslisp.cmake"/>
