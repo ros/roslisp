@@ -8,6 +8,8 @@
   <review status="experimental" notes="" />
   <depend package="roslang" />
   <depend package="rosgraph_msgs" />
+  <depend package="std_srvs" />
+  <depend package="rospack" />
   <export>
     <roslang cmake="${prefix}/rosbuild/roslisp.cmake" />
   </export>
