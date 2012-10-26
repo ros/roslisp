@@ -251,7 +251,12 @@ MSG-SLOT-VALUE which needs to infer the correct package at runtime
 which causes more consing and is less performant."
   
   (let ((msg-type (when (symbolp msg)
-                    (cdr (assoc 'type (nth-value 2 (sb-cltl2:variable-information msg env))))))
+                    (let ((type (cdr (assoc
+                                      'type
+                                      (nth-value
+                                       2 (sb-cltl2:variable-information msg env))))))
+                      (when (symbolp type)
+                        type))))
         (msg-sym (gensym "MSG")))
     (declare (type (or symbol nil) msg-type))
     `(let ((,msg-sym ,msg))
