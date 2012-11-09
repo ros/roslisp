@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(roslisp)
 
+find_package(catkin REQUIRED)
 catkin_package(CFG_EXTRAS roslisp-extras.cmake)
 
 add_subdirectory(env-hooks)
