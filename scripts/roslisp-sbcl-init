@@ -11,17 +11,13 @@
       (asdf:perform (make-instance 'asdf:compile-op) c)
       (call-next-method))))
 
-;; Add appropriate paths for asdf to look for things, using rospack to find the base directory
+;;; Add appropriate paths for asdf to look for ros-load-manifest. We
+;;; use the path of this file as base.
 (unless (asdf:find-system :ros-load-manifest nil)
-  (let ((str (make-string-output-stream)))
-    (sb-ext:run-program "rospack" '("find" "roslisp") :search t :output str)
-    (let ((pathstr (delete #\Newline (get-output-stream-string str))))
-      (when (search "couldn't find package" pathstr)
-        (format t "~&~a~&" pathstr)
-        (sb-ext:quit))
-      (unless (eql (char pathstr (1- (length pathstr))) #\/)
-        (setf pathstr (concatenate 'string pathstr "/")))
-      (let ((roslisp-base (pathname pathstr)))
-        (push (merge-pathnames #P"asdf/" roslisp-base) asdf:*central-registry*)))))
+  (let ((load-manifest-directory (parse-namestring
+                                  (concatenate 'string
+                                               (directory-namestring *load-truename*)
+                                               "../load-manifest/"))))
+    (push load-manifest-directory asdf:*central-registry*)))
 
 (asdf:operate 'asdf:load-op :ros-load-manifest)
