@@ -7,7 +7,6 @@ catkin_package(CFG_EXTRAS roslisp-extras.cmake)
 add_subdirectory(env-hooks)
 
 foreach(dir
-    asdf
     load-manifest
     rosbuild
     roslisp-msg-protocol
