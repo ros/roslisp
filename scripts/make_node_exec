@@ -1,15 +1,33 @@
 #!/bin/bash
 
-SBCL_CMD=`rospack find sbcl`/scripts/run-sbcl.sh
+ROS_SBCL_PATH=`rospack find sbcl`
+if [ -n "$ROS_SBCL_PATH" ]; then
+  SBCL_CMD=$ROS_SBCL_PATH/scripts/run-sbcl.sh
+else
+  SBCL_CMD=sbcl
+fi
+
 if [[ $# == 4 ]]; then
   pkg=$1
   system=$2
   entry=$3
   output=$4
-  $SBCL_CMD --noinform --end-runtime-options --userinit `rospack find roslisp`/scripts/roslisp-sbcl-init --noprint --disable-debugger --load `rospack find roslisp`/scripts/make-roslisp-exec.lisp $pkg $system $entry $output.lisp || exit $?
+  $SBCL_CMD --noinform --end-runtime-options --load `rospack find roslisp`/scripts/roslisp-sbcl-init --noprint --disable-debugger --load `rospack find roslisp`/scripts/make-roslisp-exec.lisp $pkg $system $entry $output.lisp || exit $?
   cat > $output <<EOF
 #!/bin/bash
-ROSLISP_CURRENT_PACKAGE=$pkg \`\rospack find sbcl\`/scripts/run-sbcl.sh --noinform --end-runtime-options --noprint --no-userinit --disable-debugger --load $output.lisp --end-toplevel-options \$*
+ROS_SBCL_PATH=\`rospack find sbcl\`
+ROSLISP_PATH=\`rospack find roslisp\`
+if [ -z "\$ROSLISP_PATH" ]; then
+  echo "roslisp not found"
+  exit 1
+fi
+if [ -n "\$ROS_SBCL_PATH" ]; then
+  SBCL=$ROS_SBCL_PATH/scripts/run-sbcl.sh
+else
+  SBCL=sbcl
+fi
+
+ROSLISP_CURRENT_PACKAGE=$pkg \$SBCL --noinform --end-runtime-options --noprint --no-userinit --disable-debugger --load \$ROSLISP_PATH/scripts/roslisp-sbcl-init --load $output.lisp --end-toplevel-options \$*
 EOF
   chmod a+x $output
 else
