@@ -75,6 +75,10 @@ Set up things so that publish may now be called with this topic.  Also, returns 
       (protected-call-to-master ("unregisterPublisher" topic *xml-rpc-caller-api*) c
         (ros-warn (roslisp) "Could not contact master at ~a when unregistering as publisher of ~a during shutdown: ~a" *master-uri* topic c)))))
 
+(defmacro make-publisher-msg (pub &rest msg-args)
+  "Convenience function to create a message that fits to a publisher. Uses the type of the publication PUB to make-msg with the MSG-ARGS."
+  `(make-message (pub-topic-type ,pub) 
+                 ,@msg-args))
 
 (defmacro publish-msg (pub &rest msg-args)
   "Convenience function that first does make-msg using the type of PUB and MSG-ARGS, then publishes the resulting message on PUB"
