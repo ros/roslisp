@@ -213,9 +213,40 @@ TIMEOUT, if specified and non-nil, is the maximum (wallclock) time to wait for. 
     (ros-debug (roslisp wait-for-service) timed-out "Timed out waiting for service ~a" service-name)
     (not timed-out)))
       
+(defclass service-client ()
+  ((service-client-name :reader service-client-name :initarg :service-client-name
+                        :documentation "The name of the service with the ROS master.")
+   (service-client-type :reader service-client-type :initarg :service-client-type
+                        :documentation "Type of message sent to request the service.")))
 
+(defun make-service-client (service-name service-type)
+  "Convenience function to create service-client object.
 
+SERVICE-NAME should be the name of the service at the ROS MASTER, and SERVICE-TYPE is the name of the service message that is send to request the service.
+"
+  (check-type service-name string)
+  (check-type service-type string)
+  (make-instance 'service-client
+                 :service-client-name service-name
+                 :service-client-type service-type))
 
+(defmacro call-service-with-client (service-client &rest service-args)
+  "Convenience wrapper of call-service using a service client.
+
+Refer to call-service for the semantics of the function. SERVICE-CLIENT expects an object of type service-client, though."
+  `(check-type ,service-client service-client)
+  `(call-service
+    (service-client-name ,service-client)
+    (service-client-type ,service-client)
+    ,@service-args))
+
+(defun wait-for-service-with-client (service-client &optional timeout)
+  "Convenience wrapper of wait-for-service using a service client.
+
+Refer to wait-for-service for the semantics of the function. SERVICE-CLIENT expects an object of type service-client, though."
+  (check-type service-client service-client)
+  (wait-for-service
+   (service-client-name service-client) timeout))
 
 (defun subscribe (topic topic-type callback &key (max-queue-length 'infty))
   "subscribe TOPIC TOPIC-TYPE CALLBACK &key MAX-QUEUE-LENGTH 
