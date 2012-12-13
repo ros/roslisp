@@ -92,10 +92,14 @@
    :wait-for-service
    :def-service-call
 
-   :make-publisher-msg
+   :make-service-client
+   :call-service-with-client
+   :wait-for-service-with-client
+
    :publish
    :publish-msg
-   
+   :make-publisher-msg
+      
    :loop-at-most-every
    :spin-until 
    :wait-duration
