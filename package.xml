@@ -12,7 +12,8 @@
 
   <url>http://ros.org/wiki/roslisp</url>
 
-  <build_depend>catkin</build_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+
   <run_depend>roslang</run_depend>
   <run_depend>sbcl</run_depend>
   <run_depend>rospack</run_depend>
