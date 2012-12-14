@@ -91,10 +91,7 @@
    :call-service
    :wait-for-service
    :def-service-call
-
    :make-service-client
-   :call-service-with-client
-   :wait-for-service-with-client
 
    :publish
    :publish-msg
