@@ -182,8 +182,9 @@ is the name of the service message that is send to request the service."
   (check-type service-name string)
   (check-type service-type string)
   (make-instance 'service-client
-                 :service-client-name service-name
-                 :service-client-type service-type))
+    :service-client-name service-name
+    :service-client-type service-type))
+
 (defgeneric call-service (service &rest rest-args))
 
 (defmethod call-service ((service-name string) &rest rest-args)
