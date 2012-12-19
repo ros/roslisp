@@ -75,6 +75,10 @@ Set up things so that publish may now be called with this topic.  Also, returns 
       (protected-call-to-master ("unregisterPublisher" topic *xml-rpc-caller-api*) c
         (ros-warn (roslisp) "Could not contact master at ~a when unregistering as publisher of ~a during shutdown: ~a" *master-uri* topic c)))))
 
+(defmacro make-publisher-msg (pub &rest msg-args)
+  "Convenience function to create a message that fits to a publisher. Uses the type of the publication PUB to make-msg with the MSG-ARGS."
+  `(make-message (pub-topic-type ,pub) 
+                 ,@msg-args))
 
 (defmacro publish-msg (pub &rest msg-args)
   "Convenience function that first does make-msg using the type of PUB and MSG-ARGS, then publishes the resulting message on PUB"
@@ -164,9 +168,26 @@ Instead of (SERVICE-FN-NAME SERVICE-TYPE-NAME), you can just specify a symbol SE
 		    (apply #'make-instance ,response-type ,response-args)))
 	     ,@body))))))
 
+(defclass service-client ()
+  ((service-client-name :reader service-client-name :initarg :service-client-name
+                        :documentation "The name of the service with the ROS master.")
+   (service-client-type :reader service-client-type :initarg :service-client-type
+                        :documentation "Type of message sent to request the service.")))
 
+(defun make-service-client (service-name service-type)
+  "Convenience function to create service-client object.
 
-(defun call-service (service-name service-type &rest request-args)
+SERVICE-NAME should be the name of the service at the ROS MASTER, and SERVICE-TYPE
+is the name of the service message that is send to request the service."
+  (check-type service-name string)
+  (check-type service-type string)
+  (make-instance 'service-client
+    :service-client-name service-name
+    :service-client-type service-type))
+
+(defgeneric call-service (service &rest rest-args))
+
+(defmethod call-service ((service-name string) &rest rest-args)
   "call-service SERVICE-NAME SERVICE-TYPE &rest ARGS
 or
 call-service SERVICE-NAME SERVICE-TYPE REQUEST-OBJECT (happens iff length(ARGS) is 1)
@@ -177,24 +198,34 @@ REQUEST-ARGS - initialization arguments that would be used when calling make-ins
 REQUEST-OBJECT - the request object itself
 
 Returns the response object from the service."
+  (destructuring-bind (service-type &rest request-args) rest-args
+    (declare (string service-name) ((or symbol string) service-type))
+    (ensure-node-is-running)
+    (let* ((service-type (etypecase service-type
+                           (symbol service-type)
+                           (string (make-service-symbol service-type))))
+           (response-type (service-response-type service-type)))
+      (with-fully-qualified-name service-name
+        (mvbind (host port) (parse-rosrpc-uri (lookup-service service-name))
+          ;; No error checking: lookup service should signal an error if there are problems
+          (let ((obj (if (= 1 (length request-args))
+                         (first request-args)
+                         (apply #'make-service-request service-type request-args))))
+            (ros-debug (roslisp call-service) "Calling service at host ~a and port ~a with ~a" host port obj)
+            (tcpros-call-service host port service-name obj response-type)))))))
 
-  (declare (string service-name) ((or symbol string) service-type))
-  (ensure-node-is-running)
-  (let* ((service-type (etypecase service-type
-                         (symbol service-type)
-                         (string (make-service-symbol service-type))))
-         (response-type (service-response-type service-type)))
-    (with-fully-qualified-name service-name
-      (mvbind (host port) (parse-rosrpc-uri (lookup-service service-name))
-        ;; No error checking: lookup service should signal an error if there are problems
-        (let ((obj (if (= 1 (length request-args))
-                       (first request-args)
-                       (apply #'make-service-request service-type request-args))))
-          (ros-debug (roslisp call-service) "Calling service at host ~a and port ~a with ~a" host port obj)
-          (tcpros-call-service host port service-name obj response-type))))))
-    
+(defmethod call-service ((service service-client) &rest rest-args)
+ "Convenience wrapper of call-service using a service client.
 
-(defun wait-for-service (service-name &optional timeout)
+Refer to the other call-service for the semantics of the function. SERVICE-CLIENT expects
+an object of type service-client, though."
+  (apply #'call-service (service-client-name service) 
+         (service-client-type service)
+         rest-args))
+
+(defgeneric wait-for-service (service &optional timeout))
+
+(defmethod wait-for-service ((service-name string) &optional timeout)
   "wait-for-service SERVICE-NAME &optional TIMEOUT
 
 Blocks until a service with this name is known to the ROS Master (unlike roscpp, doesn't currently check if the connection is actually valid), then returns true.
@@ -212,10 +243,14 @@ TIMEOUT, if specified and non-nil, is the maximum (wallclock) time to wait for. 
     (ros-debug (roslisp wait-for-service) (not timed-out) "Found service ~a" service-name)
     (ros-debug (roslisp wait-for-service) timed-out "Timed out waiting for service ~a" service-name)
     (not timed-out)))
-      
 
+(defmethod wait-for-service ((service-client service-client) &optional timeout)
+  "Convenience wrapper of wait-for-service using a service client.
 
-
+Refer to the other wait-for-service for the semantics of the function. SERVICE-CLIENT
+expects an object of type service-client, though."
+  (wait-for-service
+   (service-client-name service-client) timeout))
 
 (defun subscribe (topic topic-type callback &key (max-queue-length 'infty))
   "subscribe TOPIC TOPIC-TYPE CALLBACK &key MAX-QUEUE-LENGTH 
