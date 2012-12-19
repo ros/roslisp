@@ -91,10 +91,12 @@
    :call-service
    :wait-for-service
    :def-service-call
+   :make-service-client
 
    :publish
    :publish-msg
-
+   :make-publisher-msg
+      
    :loop-at-most-every
    :spin-until 
    :wait-duration
