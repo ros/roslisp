@@ -207,12 +207,14 @@ expires, deletes the file."
 
 (defun asdf-paths-to-add (package)
   "Given a package name, calls rospack to find out the dependencies. Adds all the /asdf directories that it finds to a list and return it."
-  (cons (get-asdf-directory (ros-package-path package))
-        (loop for pkg in (or (gethash package *ros-asdf-paths-cache*)
-                             (setf (gethash package *ros-asdf-paths-cache*)
-                                   (rospack "depends" package)))
-              for asdf-dir = (get-asdf-directory (ros-package-path pkg))
-              when asdf-dir collecting asdf-dir)))
+  (let ((asdf-dir-list 
+          (cons (get-asdf-directory (ros-package-path package))
+                (loop for pkg in (or (gethash package *ros-asdf-paths-cache*)
+                                     (setf (gethash package *ros-asdf-paths-cache*)
+                                           (rospack "depends" package)))
+                      for asdf-dir = (get-asdf-directory (ros-package-path pkg))
+                      when asdf-dir collecting asdf-dir))))
+    (remove nil asdf-dir-list)))
 
 (defun normalize (str)
   (let* ((pos (position #\Newline str))
