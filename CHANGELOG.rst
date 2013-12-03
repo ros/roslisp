@@ -2,8 +2,8 @@
 Changelog for package roslisp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.15 (2013-12-03)
+-------------------
 * Bug-fix: Make sure 'asdf-paths-to-add' does not contain any 'nil' pathnames.
 * Contributors: Georg Bartels
 
