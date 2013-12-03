@@ -12,7 +12,7 @@ Changelog for package roslisp
 * Merge pull request (`#10 <https://github.com/ros/roslisp/issues/10>`_) from ros/relocatable
   resolve roslisp path in installspace at runtime (`#490 <https://github.com/ros/catkin/issues/490>`_)
 * resolve roslisp path in installspace at runtime (`#490 <https://github.com/ros/catkin/issues/490>`_)
-* Contributors: Dirk Thomas, Georg Bartels, Lorenz Mösenlechner
+* Contributors: Dirk Thomas, Georg Bartels, Lorenz Moesenlechner
 
 1.9.13 (2013-06-24)
 -------------------
@@ -27,7 +27,7 @@ Changelog for package roslisp
   Convenience function create messages for publication object AND convenience service-client interface.
 * added buildtool_depend catkin to package.xml
 * Added a convenience function to create message for topics that uses publication to get the message type.
-* Contributors: Aaron Blasdel, Georg Bartels, Lorenz Mösenlechner
+* Contributors: Aaron Blasdel, Georg Bartels, Lorenz Moesenlechner
 
 1.9.11 (2012-11-28)
 -------------------
