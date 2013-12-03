@@ -9,21 +9,21 @@ Changelog for package roslisp
 
 1.9.14 (2013-11-21)
 -------------------
-* Merge pull request `#10 <https://github.com/ros/roslisp/issues/10>`_ from ros/relocatable
-  resolve roslisp path in installspace at runtime (`ros/catkin#490 <https://github.com/ros/catkin/issues/490>`_)
-* resolve roslisp path in installspace at runtime (`ros/catkin#490 <https://github.com/ros/catkin/issues/490>`_)
+* Merge pull request (`#10 <https://github.com/ros/roslisp/issues/10>`_) from ros/relocatable
+  resolve roslisp path in installspace at runtime (`#490 <https://github.com/ros/catkin/issues/490>`_)
+* resolve roslisp path in installspace at runtime (`#490 <https://github.com/ros/catkin/issues/490>`_)
 * Contributors: Dirk Thomas, Georg Bartels, Lorenz Mösenlechner
 
 1.9.13 (2013-06-24)
 -------------------
-* Merge pull request `#9 <https://github.com/ros/roslisp/issues/9>`_ from ros/fix_env_hook
+* Merge pull request (`#9 <https://github.com/ros/roslisp/issues/9>`_) from ros/fix_env_hook
   fix environment hook to set ROSLISP_PACKAGE_DIRECTORIES in devel space
 * fix environment hook to set ROSLISP_PACKAGE_DIRECTORIES to all devel spaces
 * Contributors: Dirk Thomas, Georg Bartels
 
 1.9.12 (2013-06-18)
 -------------------
-* Merge pull request `#3 <https://github.com/ros/roslisp/issues/3>`_ from airballking/master
+* Merge pull request (`#3 <https://github.com/ros/roslisp/issues/3>`_) from airballking/master
   Convenience function create messages for publication object AND convenience service-client interface.
 * added buildtool_depend catkin to package.xml
 * Added a convenience function to create message for topics that uses publication to get the message type.
@@ -55,7 +55,7 @@ Changelog for package roslisp
 ------------------
 * Check for unambiguous type declaration in with-fields macro.
   If the user declares the type using OR, we cannot use it for optimizing
-  the macro expansion since it is ambiguous. Fixes `#1 <https://github.com/ros/roslisp/issues/1>`_.
+  the macro expansion since it is ambiguous. Fixes (`#1 <https://github.com/ros/roslisp/issues/1>`_).
 * Updated dependencies in manifest.xml file.
 * Updated run-dependencies in package.xml.
 * Updated CMakeLists for new catkin.
