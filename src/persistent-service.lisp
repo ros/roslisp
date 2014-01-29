@@ -59,10 +59,10 @@
             (reconnect ()
               :report "Try reconnecting persistent service and execute
              the call again."
-              (close-peristent-service service)
+              (close-persistent-service service)
               (establish-persistent-service-connection service))))))))
 
-(defgeneric close-peristent-service (persistent-service)
+(defgeneric close-persistent-service (persistent-service)
   (:method ((service persistent-service))
     (close (persistent-service-stream service) :abort t)))
 
