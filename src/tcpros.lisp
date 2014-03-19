@@ -371,7 +371,7 @@
   ;; request.
   (clear-input stream)
   (tcpros-write request stream)
-  (let ((ok-byte (read-byte stream)))
+  (let ((ok-byte (read-byte stream nil)))
     (unless (eq ok-byte 1)
       (error 'service-call-error
              :message (handler-case
