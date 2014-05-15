@@ -343,7 +343,6 @@ Can also be called on a topic that we're already subscribed to - in this case, i
        (sb-sys:serve-all-events 1)))
 
   (ros-info (roslisp event-loop) "Terminating ROS Node event loop"))
-      
 
 (defun subscriber-thread (sub)
   "This is the thread that takes items off the queue and performs the callback on them (as separate from the one that puts items onto the queue from the socket)"
@@ -351,17 +350,16 @@ Can also be called on a topic that we're already subscribed to - in this case, i
   (declare (type subscription sub))
   (let ((q (buffer sub)))
     #'(lambda ()
-	(loop
-	   ;; We have to get this each time because there may be new callbacks
-	   (let ((callbacks (callbacks sub)))
-	     (mvbind (item exists) (dequeue-wait q)
-	       (if exists
-           (dolist (callback callbacks)
-             (handler-case
-                 (funcall callback item)
-               (error (e)
-                 (ros-error (roslisp service tcp) "Error during subscriber callback: '~a' for topic item: ~%~a " e item))))
-           (return))))))))
+        (loop
+          (mvbind (item exists) (dequeue-wait q)
+            (unless exists (return))
+            ;; We have to get this each time because there may be new callbacks
+            (dolist (callback (callbacks sub))
+              (handler-case
+                  (funcall callback item)
+                (error (e)
+                  (ros-error (roslisp service tcp) 
+                             "Error during subscriber callback: '~a' for topic item: ~%~a " e item)))))))))
 	   
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
