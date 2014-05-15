@@ -352,16 +352,14 @@ Can also be called on a topic that we're already subscribed to - in this case, i
     #'(lambda ()
         (loop
           (mvbind (item exists) (dequeue-wait q)
-            (if exists
-                ;; We have to get this each time because there may be new callbacks
-                (let ((callbacks (callbacks sub)))
-                  (dolist (callback callbacks)
-                    (handler-case
-                        (funcall callback item)
-                      (error (e)
-                        (ros-error (roslisp service tcp) 
-                                   "Error during subscriber callback: '~a' for topic item: ~%~a " e item)))))
-                (return)))))))
+            (unless exists (return))
+            ;; We have to get this each time because there may be new callbacks
+            (dolist (callback (callbacks sub))
+              (handler-case
+                  (funcall callback item)
+                (error (e)
+                  (ros-error (roslisp service tcp) 
+                             "Error during subscriber callback: '~a' for topic item: ~%~a " e item)))))))))
 	   
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
