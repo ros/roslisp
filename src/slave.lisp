@@ -158,7 +158,8 @@ Notes
           (return-from update-publishers))))
 
   ;; Get the current info for this topic
-  (mvbind (subscription known) (gethash topic *subscriptions*)
+  (mvbind (subscription known) (with-recursive-lock (*ros-lock*)
+                                 (gethash topic *subscriptions*))
     (cond
       (known 
 
@@ -188,7 +189,8 @@ Notes
 Right now, the transport must be TCPROS and the return value is the socket."
 
   (ros-debug (roslisp topic) "~&Subscribing to ~a at ~a" topic uri)
-  (unless (hash-table-has-key *subscriptions* topic) (roslisp-error "I'm not subscribed to ~a" topic))
+  (with-recursive-lock (*ros-lock*)
+    (unless (hash-table-has-key *subscriptions* topic) (roslisp-error "I'm not subscribed to ~a" topic)))
   (dotimes (repeat 3 (error 'simple-error :format-control "Timeout when
     subscribing publisher at ~a for topic ~a, check publisher node
     status. Change *xmlrpc-timeout* to increase wait-time." :format-arguments (list uri topic) ))
@@ -196,7 +198,8 @@ Right now, the transport must be TCPROS and the return value is the socket."
         (return
           (dbind (protocol address port) (with-function-timeout *xmlrpc-timeout* (lambda () (ros-rpc-call uri "requestTopic" topic (list (list "TCPROS")))))
             (if (string= protocol "TCPROS")
-                (setup-tcpros-subscription address port topic)
+                (with-recursive-lock (*ros-lock*)
+                  (setup-tcpros-subscription address port topic))
                 (ros-error (roslisp tcp) "Protocol ~a did not equal TCPROS... skipping connection" protocol))))
       (function-timeout () ;;just retry
         nil))))

@@ -273,35 +273,38 @@ Can also be called on a topic that we're already subscribed to - in this case, i
       (warn "Couldn't lookup topic type ~a for ~a, so not subscribing." topic-type topic)
       (return-from subscribe)))
   (with-fully-qualified-name topic
-    (with-recursive-lock (*ros-lock*)
-      
-      (if (hash-table-has-key *subscriptions* topic)
+    
+    (if (with-recursive-lock (*ros-lock*)
+          (hash-table-has-key  *subscriptions* topic))
 
-          ;; If already subscribed to topic, just add a new callback
-          (let ((sub (gethash topic *subscriptions*)))
-            (unless (equal topic-type (sub-topic-type sub))
-              (roslisp-error "Asserted topic type ~a for new subscription to ~a did not match existing type ~a" topic-type topic (sub-topic-type sub)))
-            (push callback (callbacks sub))
-            (make-subscriber :topic topic :subscription sub :callback callback))
-          
-          ;; Else create a new thread
-          (let ((sub (make-subscription :buffer (make-queue :max-size max-queue-length) 
-                                        :publisher-connections nil :callbacks (list callback) :sub-topic-type topic-type)))
+        ;; If already subscribed to topic, just add a new callback
+        (let ((sub (with-recursive-lock (*ros-lock*)
+                     (gethash topic *subscriptions*))))
+          (unless (equal topic-type (sub-topic-type sub))
+            (roslisp-error "Asserted topic type ~a for new subscription to ~a did not match existing type ~a" topic-type topic (sub-topic-type sub)))
+          (push callback (callbacks sub))
+          (make-subscriber :topic topic :subscription sub :callback callback))
+        
+        ;; Else create a new thread
+        (let ((sub (make-subscription :buffer (make-queue :max-size max-queue-length) 
+                                      :publisher-connections nil :callbacks (list callback) :sub-topic-type topic-type)))
+          (with-recursive-lock (*ros-lock*)
             (setf (gethash topic *subscriptions*) sub
                   (topic-thread sub) (sb-thread:make-thread
                                       (subscriber-thread sub)
-                                      :name (format nil "Subscriber thread for topic ~a" topic)))
-            (handler-case
-                (progn 
-                  (update-publishers
-                   topic
-                   (protected-call-to-master ("registerSubscriber" topic topic-type *xml-rpc-caller-api*) c
-                     (roslisp-error "Could not contact master at ~a when registering as subscriber to ~a: ~a"
-                                    *master-uri* topic c)))
-                  (make-subscriber :topic topic :subscription sub :callback callback))
-              (error (c)
-                (warn "Received error ~a when attempting to setup subscription to ~a of type ~a, so not subscribing."
-                      c topic topic-type)
+                                      :name (format nil "Subscriber thread for topic ~a" topic))))
+          (handler-case
+              (progn 
+                (update-publishers
+                 topic
+                 (protected-call-to-master ("registerSubscriber" topic topic-type *xml-rpc-caller-api*) c
+                   (roslisp-error "Could not contact master at ~a when registering as subscriber to ~a: ~a"
+                                  *master-uri* topic c)))
+                (make-subscriber :topic topic :subscription sub :callback callback))
+            (error (c)
+              (warn "Received error ~a when attempting to setup subscription to ~a of type ~a, so not subscribing."
+                    c topic topic-type)
+              (with-recursive-lock (*ros-lock*)
                 (remhash topic *subscriptions*))))))))
 
 (defun unsubscribe (subscriber)
