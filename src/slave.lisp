@@ -77,8 +77,10 @@ PUBLISHERS : list of publishers, each of which is a list (ADDRESS PORT)."
   (declare (ignore caller-id))
 
   (ros-debug (roslisp topic) "Publisher update ~a ~a" topic publishers)
-  (with-recursive-lock (*ros-lock*)
-    (update-publishers topic publishers)))
+  (sb-thread:make-thread
+   #'(lambda ()
+       (with-recursive-lock (*ros-lock*)
+         (update-publishers topic publishers)))))
 
 (defun |getBusInfo| (caller-id)
   "getBusInfo XML-RPC method
@@ -194,9 +196,22 @@ Right now, the transport must be TCPROS and the return value is the socket."
     status. Change *xmlrpc-timeout* to increase wait-time." :format-arguments (list uri topic) ))
     (handler-case
         (return
-          (dbind (protocol address port) (with-function-timeout *xmlrpc-timeout* (lambda () (ros-rpc-call uri "requestTopic" topic (list (list "TCPROS")))))
+          (dbind (protocol address port) 
+              ;; Check if it's our publisher if that's the case don't request the topic
+              ;; using a ros-rpc-call since it would deadlock and time out
+              (if (equal uri *xml-rpc-caller-api*)
+                  (dbind (code msg vals) (|requestTopic| *ros-node-name* topic (list (list "TCPROS")))
+                     (when (<= code 0) 
+                       (cerror "Ignore and continue" 'ros-rpc-error
+                               :call (cons "requestTopic" (list *ros-node-name* topic (list (list "TCPROS"))))
+                               :uri uri :code code :message msg :vals vals))
+                    vals)
+                  (with-function-timeout *xmlrpc-timeout* 
+                           (lambda () (ros-rpc-call uri "requestTopic" topic (list (list "TCPROS"))))))
             (if (string= protocol "TCPROS")
                 (setup-tcpros-subscription address port topic)
                 (ros-error (roslisp tcp) "Protocol ~a did not equal TCPROS... skipping connection" protocol))))
       (function-timeout () ;;just retry
         nil))))
+
+    
