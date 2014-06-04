@@ -77,10 +77,8 @@ PUBLISHERS : list of publishers, each of which is a list (ADDRESS PORT)."
   (declare (ignore caller-id))
 
   (ros-debug (roslisp topic) "Publisher update ~a ~a" topic publishers)
-  (sb-thread:make-thread
-   #'(lambda ()
-       (with-recursive-lock (*ros-lock*)
-         (update-publishers topic publishers)))))
+  (with-recursive-lock (*ros-lock*)
+    (update-publishers topic publishers)))
 
 (defun |getBusInfo| (caller-id)
   "getBusInfo XML-RPC method
