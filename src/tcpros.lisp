@@ -169,18 +169,23 @@
     (if (and (equal hostname *tcp-server-hostname*)
              (equal port *tcp-server-port*))
         (setup-tcpros-subscription-to-self hostname port topic connection stream)
-        (setup-tcpros-subscription-to-strangers hostname port topic connection stream))))
+        (setup-tcpros-subscription-to-strangers hostname port topic connection stream))
+    
+    (values stream connection)))
 
  
 
 (defun setup-tcpros-subscription-to-self (hostname port topic connection stream)
-
+  "Helper function for setting up a tcpros-subscription with a publisher that
+   uses the same tcp-server."
+  (format t "self~%")
   (mvbind (sub known) (gethash topic *subscriptions*)
     (assert known nil "Topic ~a unknown.  This error should have been caught earlier!" topic)
     
     (mvbind (pub known-pub) (gethash topic *publications*)
       (assert known-pub nil
               "Couldn't find publisher for the requested topic. This error should have been caught earlier!")
+
       (let* ((server-connection (socket-accept *tcp-server*))
              (server-stream (socket-make-stream server-connection :element-type '(unsigned-byte 8) 
                                                                   :output t :input t 
@@ -196,18 +201,20 @@
           (tcpros-write (last-message pub) server-stream)))               
       
       ;; Spawn a dedicated thread to deserialize messages off the socket onto the queue
-      (spawn-connection-thread hostname port topic stream connection (buffer sub)))))
-  
+      (spawn-connection-thread hostname port topic stream connection (buffer sub)))))     
 
 (defun setup-tcpros-subscription-to-strangers (hostname port topic connection stream)
+  "Helper function for setting up a tcpros-subscriptions with a publisher that doesn't
+   uses this tcp-server."
+  (format t "stranger~%")
   (dotimes (retry-count *setup-tcpros-subscription-max-retry* 
-                        (error 'simple-error :format-control "Timeout when trying to 
-                         communicate with publisher ~a:~a for topic ~a, check publisher node
-                         status. Change *tcp-timeout* to increase wait-time."
-                                             :format-arguments (list hostname port topic)))
-    (when (> retry-count 0) (ros-warn (roslisp tcpros) "Failed to communicate
-      with publisher ~a:~a for topic ~a, retrying: ~a" hostname port
-      topic retry-count))
+                        (error 'simple-error 
+                               :format-control "Timeout when trying to communicate with publisher ~a:~a for topic ~a, check publisher node status. Change *tcp-timeout* to increase wait-time."
+                               :format-arguments (list hostname port topic)))
+    (when (> retry-count 0) 
+      (ros-warn (roslisp tcpros) 
+                "Failed to communicate with publisher ~a:~a for topic ~a, retrying: ~a" 
+                hostname port topic retry-count))
     (handler-case
         (mvbind (sub known) (gethash topic *subscriptions*)
           (assert known nil "Topic ~a unknown.  This error should have been caught earlier!" topic)
@@ -228,7 +235,10 @@
             ;; TODO need to do something with the response, handle AnyMsg (see tcpros.py)
             
             ;; Spawn a dedicated thread to deserialize messages off the socket onto the queue
-            (spawn-connection-thread hostname port topic stream connection (buffer sub))))
+            (spawn-connection-thread hostname port topic stream connection (buffer sub)))
+
+          ;; If nothing failed return from dotimes
+          (return))
 
       (malformed-tcpros-header (c)
         (send-tcpros-header stream "error" (msg c))
@@ -238,6 +248,8 @@
         nil))))
 
 (defun spawn-connection-thread (hostname port topic stream connection buffer)
+  "Spawns a dedicated thread to deserialize messages off the socket onto the queue and
+   adds it to the deserialization-threads." 
   (let ((connection-thread 
           (sb-thread:make-thread 
            #'(lambda ()
