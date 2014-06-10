@@ -211,5 +211,3 @@ Right now, the transport must be TCPROS and the return value is the socket."
                 (ros-error (roslisp tcp) "Protocol ~a did not equal TCPROS... skipping connection" protocol))))
       (function-timeout () ;;just retry
         nil))))
-
-    

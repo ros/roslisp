@@ -94,6 +94,12 @@
                (close stream :abort abort)
                (socket-close connection)))
           (ros-debug (roslisp tcp) "Accepted TCP connection ~a" connection)
+          (format t "Connection ~a~%" connection)
+          (mvbind (con-ip con-port) (sb-bsd-sockets:socket-name connection)
+            (format t "Same address: ~a; ~a == ~a~%Same port: ~a~%" 
+                    (equalp con-ip (get-ip-address *tcp-server-hostname*))
+                    con-ip (get-ip-address *tcp-server-hostname*)
+                    (equal con-port *tcp-server-port*)))
         
           (mvbind (header parse-error) (ignore-errors (parse-tcpros-header stream))
             ;; Any errors guaranteed to be handled in the first cond clause
@@ -131,19 +137,24 @@
 
 (defun handle-topic-connection (header connection stream)
   "Handle topic connection by checking md5 sum, sending back a response header, then adding this socket to the publication list for this topic."
+  (format t "Pub-stream ~a~%" stream)
   (bind-from-header ((topic "topic") (md5 "md5sum") (uri "callerid")) header
     (let ((pub (gethash topic *publications*)))
       (tcpros-header-assert pub "unknown-topic")
       (let ((my-md5 (md5sum topic)))
         (tcpros-header-assert (or (equal md5 "*") (equal md5 my-md5)) "md5sums do not match for ~a: ~a vs ~a" topic md5 my-md5)
         
-        ;; Now we must send back the response
-        (send-tcpros-header stream 
-                            "type" (ros-datatype topic)
-                            "callerid" (caller-id)
-                            "message_definition"  (message-definition topic)
-                            "latching" (if (is-latching pub) "1" "0")
-                            "md5sum" my-md5))
+        (unless (equal uri (caller-id))
+            
+            
+
+            ;; Now we must send back the response
+            (send-tcpros-header stream 
+                                "type" (ros-datatype topic)
+                                "callerid" (caller-id)
+                                "message_definition"  (message-definition topic)
+                                "latching" (if (is-latching pub) "1" "0")
+                                "md5sum" my-md5)))
       
       ;; Add this subscription to the list for the topic
       (let ((sub (make-subscriber-connection :subscriber-socket connection :subscriber-stream stream 
@@ -154,7 +165,6 @@
         (when (and (is-latching pub) (last-message pub))
           (ros-debug (roslisp tcp) "~&Resending latched message to new subscriber")
           (tcpros-write (last-message pub) stream))))))
-
 
 
 (defparameter *setup-tcpros-subscription-max-retry* 3)
@@ -178,8 +188,13 @@
 (defun setup-tcpros-subscription-to-self (hostname port topic connection stream)
   "Helper function for setting up a tcpros-subscription with a publisher that
    uses the same tcp-server."
-  (format t "self~%")
-  (mvbind (sub known) (gethash topic *subscriptions*)
+  (format t "Sub-stream ~a~%" stream)
+  (send-tcpros-header stream "topic" topic 
+                             "md5sum" (md5sum topic) 
+                             "type" (ros-datatype topic)
+                             "callerid" (caller-id)))
+
+ #| (mvbind (sub known) (gethash topic *subscriptions*)
     (assert known nil "Topic ~a unknown.  This error should have been caught earlier!" topic)
     
     (mvbind (pub known-pub) (gethash topic *publications*)
@@ -201,7 +216,8 @@
           (tcpros-write (last-message pub) server-stream)))               
       
       ;; Spawn a dedicated thread to deserialize messages off the socket onto the queue
-      (spawn-connection-thread hostname port topic stream connection (buffer sub)))))     
+      (spawn-connection-thread hostname port topic stream connection (buffer sub))))) |#
+  
 
 (defun setup-tcpros-subscription-to-strangers (hostname port topic connection stream)
   "Helper function for setting up a tcpros-subscriptions with a publisher that doesn't
