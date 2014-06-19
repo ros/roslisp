@@ -178,14 +178,14 @@
 (defun setup-tcpros-subscription-to-self (hostname port topic connection stream)
   "Helper function for setting up a tcpros-subscription with a publisher that
    uses the same tcp-server."
-  (send-tcpros-header stream "topic" topic 
-                             "md5sum" (md5sum topic) 
-                             "type" (ros-datatype topic)
-                             "callerid" (caller-id))
-
   (mvbind (sub known) (gethash topic *subscriptions*)
     (assert known nil "Topic ~a unknown.  This error should have been caught earlier!" topic)
-
+    
+    (send-tcpros-header stream "topic" topic 
+                        "md5sum" (md5sum topic) 
+                        "type" (ros-datatype topic)
+                        "callerid" (caller-id))
+    
     ;; Spawn a dedicated thread to deserialize messages off the socket onto the queue
     (spawn-connection-thread hostname port topic stream connection (buffer sub))))  
 
