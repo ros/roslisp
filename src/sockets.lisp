@@ -51,7 +51,7 @@
 (defun tcp-connect (hostname port)
   "Helper that connects over TCP to this host and port, and returns 1) The stream 2) The socket"
   (let ((connection (make-instance 'inet-socket :type :stream :protocol :tcp))
-	(ip-address (get-ip-address hostname)))
+        (ip-address (get-ip-address hostname)))
     (ros-debug (roslisp tcp) "~&Connecting to ~a ~a" ip-address port)
     (socket-connect connection ip-address port)
     (values (socket-make-stream connection :output t :input t :element-type '(unsigned-byte 8)) connection)))
