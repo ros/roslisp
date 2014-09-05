@@ -25,10 +25,10 @@ macro(rosbuild_add_lisp_executable _output _system_name _entry_point)
     COMMAND echo -n)
   add_custom_target(${_targetname} ALL
                      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_output} ${CMAKE_CURRENT_SOURCE_DIR}/${_output}.lisp
-                     COMMAND ${roslisp_make_node_exe} ${PROJECT_NAME} ${_system_name} ${_entry_point} ${CMAKE_CURRENT_SOURCE_DIR}/${_output})
+                     COMMAND ${ROSLISP_MAKE_NODE_BIN} ${PROJECT_NAME} ${_system_name} ${_entry_point} ${CMAKE_CURRENT_SOURCE_DIR}/${_output})
   # Make this executable depend on all previously declared executables, to
   # serialize them.
-  add_dependencies(${_targetname} rosbuild_precompile ${roslisp_executables})
+  add_dependencies(${_targetname} rosbuild_precompile ${ROSLISP_EXECUTABLES})
   # Add this executable to the list of executables on which all future
   # executables will depend.
   list(APPEND ROSLISP_EXECUTABLES ${_targetname})
