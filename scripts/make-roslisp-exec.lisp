@@ -15,7 +15,8 @@
           (format *error-output* "Compilation failed due to condition: ~a~&" e)
           (sb-ext:quit :unix-status 1))))
 
-    (with-open-file (strm output-filename :if-exists :supersede :direction :output)
+    (with-open-file (strm (ensure-directories-exist output-filename)
+                          :if-exists :supersede :direction :output)
       (let ((*standard-output* strm))
         (pprint '(require :asdf))
         (pprint '(defmethod asdf:perform :around ((o asdf:load-op)
