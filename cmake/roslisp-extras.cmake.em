@@ -17,7 +17,7 @@ if(NOT ${ROSLISP_EXECUTABLES})
   set(${ROSLISP_EXECUTABLES})
 endif()
 
-macro(rosbuild_add_lisp_executable _output _system_name _entry_point)
+macro(catkin_add_lisp_executable _output _system_name _entry_point)
   set(_targetname _roslisp_${_output})
   string(REPLACE "/" "_" _targetname ${_targetname})
   # Add dummy custom command to get make clean behavior right.
@@ -32,4 +32,4 @@ macro(rosbuild_add_lisp_executable _output _system_name _entry_point)
   # Add this executable to the list of executables on which all future
   # executables will depend.
   list(APPEND ROSLISP_EXECUTABLES ${_targetname})
-endmacro(rosbuild_add_lisp_executable)
+endmacro(catkin_add_lisp_executable)
