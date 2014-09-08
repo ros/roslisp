@@ -33,4 +33,9 @@ macro(catkin_add_lisp_executable _output _system_name _entry_point)
   # Add this executable to the list of executables on which all future
   # executables will depend.
   list(APPEND ROSLISP_EXECUTABLES ${_targetname})
+  # automatically mark the generated executables for installation
+  install(PROGRAMS ${_targetdir}/${_output}
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+  install(FILES ${_targetdir}/${_output}.lisp
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 endmacro(catkin_add_lisp_executable)
