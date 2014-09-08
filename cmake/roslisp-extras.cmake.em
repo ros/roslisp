@@ -20,12 +20,13 @@ endif()
 macro(catkin_add_lisp_executable _output _system_name _entry_point)
   set(_targetname _roslisp_${_output})
   string(REPLACE "/" "_" _targetname ${_targetname})
+  set(_targetdir ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION})
   # Add dummy custom command to get make clean behavior right.
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${_output} ${CMAKE_CURRENT_SOURCE_DIR}/${_output}.lisp
+  add_custom_command(OUTPUT ${_targetdir}/${_output} ${_targetdir}/${_output}.lisp
     COMMAND echo -n)
   add_custom_target(${_targetname} ALL
-                     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_output} ${CMAKE_CURRENT_SOURCE_DIR}/${_output}.lisp
-                     COMMAND ${ROSLISP_MAKE_NODE_BIN} ${PROJECT_NAME} ${_system_name} ${_entry_point} ${CMAKE_CURRENT_SOURCE_DIR}/${_output})
+                     DEPENDS ${_targetdir}/${_output} ${_targetdir}/${_output}.lisp
+                     COMMAND ${ROSLISP_MAKE_NODE_BIN} ${PROJECT_NAME} ${_system_name} ${_entry_point} ${_targetdir}/${_output})
   # Make this executable depend on all previously declared executables, to
   # serialize them.
   add_dependencies(${_targetname} rosbuild_precompile ${ROSLISP_EXECUTABLES})
