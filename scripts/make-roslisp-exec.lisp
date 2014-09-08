@@ -13,7 +13,7 @@
             (asdf:operate 'asdf:compile-op (third sb-ext:*posix-argv*)))
         (error (e)
           (format *error-output* "Compilation failed due to condition: ~a~&" e)
-          (sb-ext:quit :unix-status 1))))
+          (sb-ext:exit :code 1))))
 
     (with-open-file (strm (ensure-directories-exist output-filename)
                           :if-exists :supersede :direction :output)
@@ -31,8 +31,8 @@
         (pprint `(push ,roslisp-path asdf:*central-registry*))
         (pprint '(defun roslisp-debugger-hook (condition me)
                   (declare (ignore me))
-                  (flet ((failure-quit (&key recklessly-p)
-                           (sb-ext:quit :unix-status 1 :recklessly-p recklessly-p)))
+                  (flet ((failure-quit (&key abort-p)
+                           (sb-ext:exit :code 1 :abort abort-p)))
                     (handler-case
                         (progn
                           (format *error-output*
@@ -40,7 +40,7 @@
                           (finish-output *error-output*)
                           (failure-quit))
                       (condition ()
-                        (failure-quit :recklessly-p t))))))
+                        (failure-quit :abort-p t))))))
         (pprint '(unless (let ((v (sb-ext:posix-getenv "ROSLISP_BACKTRACE_ON_ERRORS"))) (and (stringp v) (> (length v) 0)))
                   (setq sb-ext:*invoke-debugger-hook* #'roslisp-debugger-hook)))
 
@@ -60,5 +60,5 @@
                                           (funcall (symbol-function (intern "ROS-HOME" :ros-load))))
                          :if-does-not-exist nil)
                    (funcall (symbol-function (read-from-string ,(fourth sb-ext:*posix-argv*))))
-                   (sb-ext:quit))))))
-  (sb-ext:quit))
+                   (sb-ext:exit))))))
+  (sb-ext:exit))

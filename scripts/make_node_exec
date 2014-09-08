@@ -19,7 +19,7 @@ if [[ $# == 4 ]]; then
   entry=$3
   output=$4
   echo "Generating Lisp executable."
-  $SBCL_CMD --noinform --end-runtime-options --noprint --disable-debugger \
+  $SBCL_CMD --noinform --end-runtime-options --noprint --non-interactive \
             --load $ROSLISP_PATH/scripts/roslisp-sbcl-init \
             --load $ROSLISP_PATH/scripts/make-roslisp-exec.lisp \
                    $pkg $system $entry $output.lisp \
