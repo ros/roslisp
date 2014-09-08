@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 ROS_SBCL_PATH=`rospack find sbcl 2>&-`
 if [ -n "$ROS_SBCL_PATH" ]; then
@@ -13,7 +13,7 @@ if [ -z "$ROSLISP_PATH" ]; then
   exit 1
 fi
 
-if [[ $# == 4 ]]; then
+if [ $# = 4 ]; then
   pkg=$1
   system=$2
   entry=$3
