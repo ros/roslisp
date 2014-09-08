@@ -17,35 +17,35 @@ if(NOT ${ROSLISP_EXECUTABLES})
   set(${ROSLISP_EXECUTABLES})
 endif()
 
-function(catkin_add_lisp_executable _output _system_name _entry_point)
+function(add_lisp_executable output system_name entry_point)
   if(${ARGC} LESS 4)
-    set(_targetname _roslisp_${_output})
+    set(targetname _roslisp_${output})
   elseif(${ARGC} LESS 5)
     set(extra_macro_args ${ARGN})
-    list(GET extra_macro_args 0 _targetname)
+    list(GET extra_macro_args 0 targetname)
   elseif(${ARGC} GREATER 4)
-    message(SEND_ERROR "[roslisp] catkin_ad_lisp_executable can have maximum of 4 arguments")
+    message(SEND_ERROR "[roslisp] ad_lisp_executable can have maximum of 4 arguments")
   endif()
-  string(REPLACE "/" "_" _targetname ${_targetname})
-  set(_targetdir ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION})
+  string(REPLACE "/" "_" targetname ${targetname})
+  set(targetdir ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION})
 
   # Add dummy custom command to get make clean behavior right.
-  add_custom_command(OUTPUT ${_targetdir}/${_output} ${_targetdir}/${_output}.lisp
+  add_custom_command(OUTPUT ${targetdir}/${output} ${targetdir}/${output}.lisp
     COMMAND echo -n)
-  add_custom_target(${_targetname} ALL
-                     DEPENDS ${_targetdir}/${_output} ${_targetdir}/${_output}.lisp
-                     COMMAND ${ROSLISP_MAKE_NODE_BIN} ${PROJECT_NAME} ${_system_name} ${_entry_point} ${_targetdir}/${_output})
+  add_custom_target(${targetname} ALL
+                     DEPENDS ${targetdir}/${output} ${targetdir}/${output}.lisp
+                     COMMAND ${ROSLISP_MAKE_NODE_BIN} ${PROJECT_NAME} ${system_name} ${entry_point} ${targetdir}/${output})
 
   # Make this executable depend on all previously declared executables, to serialize them.
-  add_dependencies(${_targetname} rosbuild_precompile ${ROSLISP_EXECUTABLES})
+  add_dependencies(${targetname} rosbuild_precompile ${ROSLISP_EXECUTABLES})
   # Add this executable to the list of executables on which all future
   # executables will depend.
-  list(APPEND ROSLISP_EXECUTABLES ${_targetname})
+  list(APPEND ROSLISP_EXECUTABLES ${targetname})
   set(ROSLISP_EXECUTABLES "${ROSLISP_EXECUTABLES}" PARENT_SCOPE)
 
   # mark the generated executables for installation
-  install(PROGRAMS ${_targetdir}/${_output}
+  install(PROGRAMS ${targetdir}/${output}
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-  install(FILES ${_targetdir}/${_output}.lisp
+  install(FILES ${targetdir}/${output}.lisp
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-endfunction(catkin_add_lisp_executable)
+endfunction(add_lisp_executable)

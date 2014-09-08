@@ -5,7 +5,7 @@
 (flet ((failure-quit (&key exit-code)
          (if (find-symbol "EXIT" 'sb-ext)
              (funcall (intern "EXIT" 'sb-ext) :code exit-code)
-             (sb-ext:quit :unix-status exit-code))))
+             (funcall (intern "QUIT" 'sb-ext) :unix-status exit-code))))
   (let ((p (sb-ext:posix-getenv "ROS_ROOT")))
     (unless p (error "ROS_ROOT not set"))
     (let ((roslisp-path (merge-pathnames (make-pathname :directory '(:relative "asdf"))
@@ -36,8 +36,10 @@
                     (declare (ignore me))
                     (flet ((failure-quit (&key abort-p)
                              (if (find-symbol "EXIT" 'sb-ext)
-                                 (funcall (intern "EXIT" 'sb-ext) :code 1 :abort abort-p)
-                                 (sb-ext:quit :unix-status 1 :recklessly-p abort-p))))
+                                 (funcall (intern "EXIT" 'sb-ext)
+                                          :code 1 :abort abort-p)
+                                 (funcall (intern "QUIT" 'sb-ext)
+                                          :unix-status 1 :recklessly-p abort-p))))
                       (handler-case
                           (progn
                             (format *error-output*
@@ -70,5 +72,5 @@
                      (funcall (symbol-function (read-from-string ,(fourth sb-ext:*posix-argv*))))
                      (if (find-symbol "EXIT" 'sb-ext)
                          (funcall (intern "EXIT" 'sb-ext))
-                         (sb-ext:quit)))))))
+                         (funcall (intern "QUIT" 'sb-ext))))))))
     (failure-quit :exit-code 0)))
