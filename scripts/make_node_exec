@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ROS_SBCL_PATH=`rospack find sbcl 2>&-`
 if [ -n "$ROS_SBCL_PATH" ]; then
   SBCL_CMD=$ROS_SBCL_PATH/scripts/run-sbcl.sh
 else
-  SBCL_CMD=/usr/bin/sbcl
+  SBCL_CMD="/usr/bin/env sbcl"
 fi
 
 ROSLISP_PATH=`rospack find roslisp`
@@ -36,7 +36,7 @@ fi
 if [ -n "\$ROS_SBCL_PATH" ]; then
   SBCL=\$ROS_SBCL_PATH/scripts/run-sbcl.sh
 else
-  SBCL=/usr/bin/sbcl
+  SBCL="/usr/bin/env sbcl"
 fi
 
 ROSLISP_CURRENT_PACKAGE=$pkg \$SBCL --noinform --end-runtime-options --noprint --no-userinit --disable-debugger --load \$ROSLISP_PATH/scripts/roslisp-sbcl-init --load $output.lisp --end-toplevel-options \$*
