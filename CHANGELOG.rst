@@ -2,6 +2,18 @@
 Changelog for package roslisp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#20 <https://github.com/ros/roslisp/issues/20>`_ from daewok/use_sim_time
+  use_sim_time parameter should be absolute.
+* Merge pull request `#18 <https://github.com/ros/roslisp/issues/18>`_ from airballking/fix-issue17
+  fix for ASDF3 compatibility
+* Merge pull request `#16 <https://github.com/ros/roslisp/issues/16>`_ from jannikb/master
+  Fixed Issue `ros/roslisp#12 <https://github.com/ros/roslisp/issues/12>`_
+* Merge pull request `#15 <https://github.com/ros/roslisp/issues/15>`_ from jannikb/master
+  Start fixing issue `ros/roslisp#12 <https://github.com/ros/roslisp/issues/12>`_
+* Contributors: Eric Timmons, Georg Bartels, Jannik Buckelo, Lorenz Mösenlechner
+
 1.9.16 (2014-04-22)
 -----------
 * Added Georg Bartels as maintainer in package.xml.
