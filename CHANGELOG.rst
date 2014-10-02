@@ -2,8 +2,8 @@
 Changelog for package roslisp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.17 (2014-10-02)
+-------------------
 * Merge pull request `#20 <https://github.com/ros/roslisp/issues/20>`_ from daewok/use_sim_time
   use_sim_time parameter should be absolute.
 * Merge pull request `#18 <https://github.com/ros/roslisp/issues/18>`_ from airballking/fix-issue17
