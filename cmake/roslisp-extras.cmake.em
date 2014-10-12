@@ -7,7 +7,7 @@
 set(ROSLISP_MAKE_NODE_BIN "@(CMAKE_CURRENT_SOURCE_DIR)/scripts/make_node_exec")
 @[else]@
 # location of script in installspace
-set(ROSLISP_MAKE_NODE_BIN "${roslisp_DIR}/../../common-lisp/ros/roslisp/scripts/make_node_exec")
+set(ROSLISP_MAKE_NODE_BIN "${roslisp_DIR}/../scripts/make_node_exec")
 @[end if]@
 
 # Build up a list of executables, in order to make them depend on each
