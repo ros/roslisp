@@ -21,7 +21,7 @@ if [ $# = 4 ]; then
             --script \
       || exit $?
   cat > $output <<EOF
-#!/usr/bin/evn sh
+#!/usr/bin/env sh
 
 SBCL_CMD="/usr/bin/env sbcl"
 
@@ -31,7 +31,9 @@ if [ -z "\$ROSLISP_PATH" ]; then
   exit 1
 fi
 
-ROSLISP_CURRENT_PACKAGE=$pkg \$SBCL_CMD --noinform --end-runtime-options --noprint --no-userinit --disable-debugger --load \$ROSLISP_PATH/scripts/roslisp-sbcl-init --load $output.lisp --end-toplevel-options \$*
+ROSLISP_CURRENT_PACKAGE=$pkg
+
+$SBCL_CMD --noinform --end-runtime-options --noprint --no-userinit --disable-debugger --load \$ROSLISP_PATH/scripts/roslisp-sbcl-init --load $output.lisp --end-toplevel-options \$*
 EOF
   chmod a+x $output
 else
