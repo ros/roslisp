@@ -13,9 +13,7 @@ set(ROSLISP_MAKE_NODE_BIN "${roslisp_DIR}/../scripts/make_node_exec")
 # Build up a list of executables, in order to make them depend on each
 # other, to avoid building them in parallel, because it's not safe to do
 # that.
-if(NOT ${ROSLISP_EXECUTABLES})
-  set(${ROSLISP_EXECUTABLES})
-endif()
+unset(ROSLISP_EXECUTABLES)
 
 # example usage:
 # add_lisp_executable(my_script my-system my-system:my-func [my_targetname])
@@ -39,7 +37,9 @@ function(add_lisp_executable output system_name entry_point)
                      COMMAND ${ROSLISP_MAKE_NODE_BIN} ${PROJECT_NAME} ${system_name} ${entry_point} ${targetdir}/${output})
 
   # Make this executable depend on all previously declared executables, to serialize them.
-  add_dependencies(${targetname} rosbuild_precompile ${ROSLISP_EXECUTABLES})
+  if(ROSLISP_EXECUTABLES)
+    add_dependencies(${targetname} ${ROSLISP_EXECUTABLES})
+  endif()
   # Add this executable to the list of executables on which all future
   # executables will depend.
   list(APPEND ROSLISP_EXECUTABLES ${targetname})
