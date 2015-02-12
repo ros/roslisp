@@ -5,15 +5,22 @@
 @[if DEVELSPACE]@
 # location of script in develspace
 set(ROSLISP_MAKE_NODE_BIN "@(CMAKE_CURRENT_SOURCE_DIR)/scripts/make_node_exec")
+set(ROSLISP_COMPILE_MANIFEST_BIN "@(CMAKE_CURRENT_SOURCE_DIR)/scripts/compile_load_manifest")
 @[else]@
 # location of script in installspace
 set(ROSLISP_MAKE_NODE_BIN "${roslisp_DIR}/../scripts/make_node_exec")
+set(ROSLISP_COMPILE_MANIFEST_BIN "${roslisp_DIR}/../scripts/compile_load_manifest")
 @[end if]@
 
 # Build up a list of executables, in order to make them depend on each
 # other, to avoid building them in parallel, because it's not safe to do
 # that.
-unset(ROSLISP_EXECUTABLES)
+# The first entry in this list will be a target to compile ros-load-manifest
+# as all the executables depend on it.
+if(NOT TARGET _roslisp_load_manifest)
+  add_custom_target(_roslisp_load_manifest ALL COMMAND ${ROSLISP_COMPILE_MANIFEST_BIN})
+endif()
+set(ROSLISP_EXECUTABLES _roslisp_load_manifest)
 
 # example usage:
 # add_lisp_executable(my_script my-system my-system:my-func [my_targetname])
@@ -33,8 +40,8 @@ function(add_lisp_executable output system_name entry_point)
   add_custom_command(OUTPUT ${targetdir}/${output} ${targetdir}/${output}.lisp
     COMMAND echo -n)
   add_custom_target(${targetname} ALL
-                     DEPENDS ${targetdir}/${output} ${targetdir}/${output}.lisp
-                     COMMAND ${ROSLISP_MAKE_NODE_BIN} ${PROJECT_NAME} ${system_name} ${entry_point} ${targetdir}/${output})
+    DEPENDS ${targetdir}/${output} ${targetdir}/${output}.lisp
+    COMMAND ${ROSLISP_MAKE_NODE_BIN} ${PROJECT_NAME} ${system_name} ${entry_point} ${targetdir}/${output})
 
   # Make this executable depend on all previously declared executables, to serialize them.
   if(ROSLISP_EXECUTABLES)
