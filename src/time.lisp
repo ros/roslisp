@@ -49,6 +49,7 @@
 /use_sim_time parameter), return the last received time on the /time or /clock topics,
 or 0.0 if no time message received yet.
 Otherwise, return the unix time (seconds since epoch with microsecond precision)."
+  #+sbcl
   (if *use-sim-time*
       (if *last-clock*
           (rosgraph_msgs-msg:clock *last-clock*)
@@ -58,9 +59,8 @@ Otherwise, return the unix time (seconds since epoch with microsecond precision)
             0.0))
       (multiple-value-bind (secs usecs) (sb-ext:get-time-of-day)
         (declare (type unsigned-byte secs) (type (unsigned-byte 31) usecs))
-        (unless (mutex-owner *debug-stream-lock*)
-              (ros-debug (roslisp time) "time?"))
-        (float (+ secs (/ usecs 1d6))))))
+        (float (+ secs (/ usecs 1d6)))))
+  #-sbcl (error "Only supported in SBCL."))
 
 (defun spin-until-ros-time-valid ()
   (spin-until (> (ros-time) 0.0) 0.05
