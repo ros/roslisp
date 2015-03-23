@@ -39,11 +39,6 @@
 
 (in-package :roslisp)
 
-(defvar *time-base* (unix-time)
-  "Holds unix time (rounded to the nearest second) when roslisp was started")
-(defvar *internal-time-base* (get-internal-real-time)
-  "Holds CL's internal time when roslisp was started")
-
 (defun ros-time ()
   "If *use-sim-time* is true (which is set upon node startup by looking up the ROS
 /use_sim_time parameter), return the last received time on the /time or /clock topics,
@@ -74,3 +69,20 @@ Otherwise, return the unix time (seconds since epoch with microsecond precision)
     (spin-until (>= (ros-time) until) .01
       (every-nth-time 100
 	(ros-debug (roslisp time) "In wait-duration spin loop; waiting until ~a" until)))))
+
+
+;;; Deprecated special variables
+
+(defvar *%time-base* (unix-time)
+  "This variable is deprecated as of roslisp 1.9.18.
+Holds unix time (rounded to the nearest second) when roslisp was started")
+(define-symbol-macro *time-base*
+    (progn (warn "roslisp:*time-base* is deprecated as of roslisp 1.9.18.")
+           *%time-base*))
+
+(defvar *%internal-time-base* (get-internal-real-time)
+  "This variable is deprecated as of roslisp 1.9.18.
+Holds CL's internal time when roslisp was started")
+(define-symbol-macro *internal-time-base*
+    (progn (warn "roslisp:*internal-time-base* is deprecated as of roslisp 1.9.18.")
+           *%internal-time-base))
