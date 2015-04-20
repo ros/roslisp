@@ -6,10 +6,12 @@
 # location of script in develspace
 set(ROSLISP_MAKE_NODE_BIN "@(CMAKE_CURRENT_SOURCE_DIR)/scripts/make_node_exec")
 set(ROSLISP_COMPILE_MANIFEST_BIN "@(CMAKE_CURRENT_SOURCE_DIR)/scripts/compile_load_manifest")
+set(ROSLISP_EXE_SCRIPT "@(CMAKE_CURRENT_SOURCE_DIR)/scripts/make_exe_script")
 @[else]@
 # location of script in installspace
 set(ROSLISP_MAKE_NODE_BIN "${roslisp_DIR}/../scripts/make_node_exec")
 set(ROSLISP_COMPILE_MANIFEST_BIN "${roslisp_DIR}/../scripts/compile_load_manifest")
+set(ROSLISP_EXE_SCRIPT "${roslisp_DIR}/..//scripts/make_exe_script")
 @[end if]@
 
 # Build up a list of executables, in order to make them depend on each
@@ -22,11 +24,12 @@ if(NOT TARGET _roslisp_load_manifest)
 endif()
 set(ROSLISP_EXECUTABLES _roslisp_load_manifest)
 
+
 # example usage:
-# add_lisp_executable(my_script my-system my-system:my-func [my_targetname])
-function(add_lisp_executable output system_name entry_point)
+# add_compiled_lisp_executable(my_script my-system my-system:my-func [my_targetname])
+function(add_compiled_lisp_executable output system_name entry_point)
   if(${ARGC} LESS 3 OR ${ARGC} GREATER 4)
-    message(SEND_ERROR "[roslisp] add_lisp_executable can only have 3 or 4 arguments")
+    message(SEND_ERROR "[roslisp] add_compiled_lisp_executable can only have 3 or 4 arguments")
   elseif(${ARGC} LESS 4)
     set(targetname _roslisp_${output})
   else()
@@ -51,6 +54,37 @@ function(add_lisp_executable output system_name entry_point)
   # executables will depend.
   list(APPEND ROSLISP_EXECUTABLES ${targetname})
   set(ROSLISP_EXECUTABLES "${ROSLISP_EXECUTABLES}" PARENT_SCOPE)
+
+  # mark the generated executables for installation
+  install(PROGRAMS ${targetdir}/${output}
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+  install(FILES ${targetdir}/${output}.lisp
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+endfunction(add_compiled_lisp_executable)
+
+
+# example usage:
+# add_lisp_executable(my_script my-system my-package:my-func)
+function(add_lisp_executable output system_name entry_point)
+  if(NOT ${ARGC} EQUAL 3)
+    message(SEND_ERROR "[roslisp] add_lisp_executable can only have 3 arguments")
+  endif()
+
+  set(targetdir ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION})
+  set(targetname _roslisp_${output})
+  string(REPLACE "/" "_" targetname ${targetname})
+
+  # create directory if it does not exist
+  file(MAKE_DIRECTORY ${targetdir})
+
+  # generate script
+  add_custom_command(OUTPUT ${targetdir}/${output}
+    COMMAND ${ROSLISP_EXE_SCRIPT} ${PROJECT_NAME} ${system_name} ${entry_point}
+    ${targetdir}/${output}
+    DEPENDS ${ROSLISP_EXE_SCRIPT}
+    COMMENT "Generating lisp exe script ${targetdir}/${output}"
+    VERBATIM)
+  add_custom_target(${targetname} ALL DEPENDS ${targetdir}/${output})
 
   # mark the generated executables for installation
   install(PROGRAMS ${targetdir}/${output}
