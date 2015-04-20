@@ -13,7 +13,7 @@ if [ $# = 4 ]; then
   output=$4
   cat > $output <<EOF
 #!/usr/bin/env sh
-"true"; exec /usr/bin/env sbcl --noinform --load $ROSLISP_PATH/scripts/roslisp-sbcl-init --script "$0" "$@"
+"true"; exec /usr/bin/env sbcl --noinform --load $ROSLISP_PATH/scripts/roslisp-sbcl-init --script "\$0" "\$@"
 
 (ros-load:load-system "${pkg}" "${system}")
 (${entry})
