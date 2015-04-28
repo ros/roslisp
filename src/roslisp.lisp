@@ -66,6 +66,8 @@
    :make-request
    :symbol-code
    :symbol-codes
+   :code-symbols
+   :code-symbol
 
    :load-if-necessary
    
