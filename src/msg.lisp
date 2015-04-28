@@ -76,7 +76,7 @@
   nil)
 
 (defmethod symbol-code ((m ros-message) s)
-  (symbol-code (class-of m) s))
+  (symbol-code (type-of m) s))
 
 (defmethod symbol-code ((m symbol) s)
   (let ((pair (assoc s (symbol-codes m))))
