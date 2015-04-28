@@ -68,7 +68,7 @@
 (defgeneric service-response-type (srv))
 
 (defgeneric symbol-codes (msg-type)
-  (:documentation "Return an association list from symbols to numbers (the const declarations in the .msg file)."))
+  (:documentation "Return an association list from symbols to numbers (the const declarations in the .msg file). `msg-type' is either a symbol naming the message class or an instance of the class."))
 
 
 (defgeneric symbol-code (msg-type symbol)

@@ -75,6 +75,9 @@
 (defmethod symbol-codes ((msg-type symbol))
   nil)
 
+(defmethod symbol-codes ((m ros-message))
+  (symbol-codes (type-of m)))
+
 (defmethod symbol-code ((m ros-message) s)
   (symbol-code (type-of m) s))
 
