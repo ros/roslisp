@@ -15,7 +15,7 @@ Changelog for package roslisp
 * Contributors: Eric Timmons, Georg Bartels, Jannik Buckelo, Lorenz Mösenlechner
 
 1.9.16 (2014-04-22)
------------
+-------------------
 * Added Georg Bartels as maintainer in package.xml.
 * Bug-fix: Export SERVICE-CALL-ERROR symbol.
 * Bug-fix: Don't throw END-OF-FILE condition in TCPROS-DO-SERVICE-REQUEST.
