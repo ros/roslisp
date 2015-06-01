@@ -89,6 +89,4 @@ function(add_lisp_executable output system_name entry_point)
   # mark the generated executables for installation
   install(PROGRAMS ${targetdir}/${output}
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-  install(FILES ${targetdir}/${output}.lisp
-    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 endfunction(add_lisp_executable)
