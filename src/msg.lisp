@@ -89,8 +89,9 @@
 
 (defmethod code-symbol ((msg-type symbol) code)
   (let ((pair (rassoc code (symbol-codes msg-type) :test #'=)))
-    (when pair
-      (car pair))))
+    (unless pair
+      (error "Could not get code symbol for ~a in ROS message type ~a" code msg-type))
+    (car pair)))
 
 (defmethod code-symbol ((m ros-message) code)
   (code-symbol (type-of m) code))
