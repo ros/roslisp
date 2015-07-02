@@ -68,13 +68,35 @@
 (defgeneric service-response-type (srv))
 
 (defgeneric symbol-codes (msg-type)
-  (:documentation "Return an association list from symbols to numbers (the const declarations in the .msg file)."))
-
+  (:documentation "Return an association list from symbols to numbers (the const declarations in the .msg file). `msg-type' is either a symbol naming the message class or an instance of the class."))
 
 (defgeneric symbol-code (msg-type symbol)
   (:documentation "symbol-code MSG-TYPE SYMBOL.  Gets the value of a message-specific constant declared in a msg file.  The first argument is either a symbol naming the message class, or an instance of the class, and the second argument is the keyword symbol corresponding to the constant name. 
 
 For example, to get the value of the DEBUG constant from Log.msg, use (symbol-code '<Log> :debug)."))
+
+(defgeneric code-symbols (msg-type code)
+  (:documentation "Retrieves the list of symbol-code associations which contain
+ `code' within `msg-type'. `msg-type' is a either a symbol naming the message class
+ or an instance of that class. `code' is an integer.
+
+ For example, if my_msgs/Log.msg has defined the constants DEBUG=1, WARN=2, ERROR=1,
+ you can get all code-symbol associations with constant code 1 with:
+
+ ROSLISP-MSG-PROTOCOL> (code-symbols 'my_msgs-msg:log 1)
+   ((:DEBUG . 1) (:ERROR . 1))"))
+
+(defgeneric code-symbol (msg-type code)
+  (:documentation "Retrieves the first symbol associated with the constant `code'
+ in the symbol codes of `msg-type'. If no such association exists, it returns NIL.
+ `msg-type' is a either a symbol naming the message class or an instance of that
+ class. `code' is an integer.
+
+ For example, if my_msgs/Log.msg has defined the constants DEBUG=1, WARN=2, ERROR=1, you
+ can get the first symbol associated with the constant code 1 with:
+
+ ROSLISP-MSG-PROTOCOL> (code-symbol 'my_msgs-msg:log 1)
+   :DEBUG"))
 
 (defgeneric ros-message-to-list (msg)
   (:documentation "Return a structured list representation of the message.  For example, say message type foo has a float field x equal to 42, and a field y which is itself a message of type bar, which has a single field z=24.  This function would then return the structured list '(foo (:x . 42.0) (:y . (bar (:z . 24)))).  

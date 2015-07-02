@@ -51,6 +51,8 @@
            :service-response-type
            :symbol-codes
            :symbol-code
+           :code-symbols
+           :code-symbol
            :string-to-ros-msgtype-symbol
            :ros-message-to-list
            :list-to-ros-message

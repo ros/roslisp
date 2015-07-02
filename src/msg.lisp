@@ -75,8 +75,26 @@
 (defmethod symbol-codes ((msg-type symbol))
   nil)
 
+(defmethod symbol-codes ((m ros-message))
+  (symbol-codes (type-of m)))
+
 (defmethod symbol-code ((m ros-message) s)
   (symbol-code (type-of m) s))
+
+(defmethod code-symbols ((msg-type symbol) code)
+  (remove code (symbol-codes msg-type) :test-not #'= :key #'rest))
+
+(defmethod code-symbols ((m ros-message) code)
+  (code-symbols (type-of m) code))
+
+(defmethod code-symbol ((msg-type symbol) code)
+  (let ((pair (rassoc code (symbol-codes msg-type) :test #'=)))
+    (unless pair
+      (error "Could not get code symbol for ~a in ROS message type ~a" code msg-type))
+    (car pair)))
+
+(defmethod code-symbol ((m ros-message) code)
+  (code-symbol (type-of m) code))
 
 (defmethod symbol-code ((m symbol) s)
   (let ((pair (assoc s (symbol-codes m))))
