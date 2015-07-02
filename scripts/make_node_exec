@@ -1,36 +1,42 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
-ROS_SBCL_PATH=`rospack find sbcl`
-if [ -n "$ROS_SBCL_PATH" ]; then
-  SBCL_CMD=$ROS_SBCL_PATH/scripts/run-sbcl.sh
-else
-  SBCL_CMD=sbcl
+SBCL_CMD="/usr/bin/env sbcl"
+
+ROSLISP_PATH=`rospack find roslisp`
+if [ -z "$ROSLISP_PATH" ]; then
+  echo "roslisp not found"
+  exit 1
 fi
 
-if [[ $# == 4 ]]; then
+if [ $# = 4 ]; then
   pkg=$1
   system=$2
   entry=$3
   output=$4
-  $SBCL_CMD --noinform --end-runtime-options --load `rospack find roslisp`/scripts/roslisp-sbcl-init --noprint --disable-debugger --load `rospack find roslisp`/scripts/make-roslisp-exec.lisp $pkg $system $entry $output.lisp || exit $?
+  echo "Generating Lisp executable."
+  $SBCL_CMD --noinform --end-runtime-options --noprint --non-interactive \
+            --load $ROSLISP_PATH/scripts/roslisp-sbcl-init \
+            --load $ROSLISP_PATH/scripts/make-roslisp-exec.lisp \
+                   $pkg $system $entry $output.lisp \
+            --script \
+      || exit $?
   cat > $output <<EOF
-#!/bin/bash
-ROS_SBCL_PATH=\`rospack find sbcl\`
+#!/usr/bin/env sh
+
+SBCL_CMD="/usr/bin/env sbcl"
+
 ROSLISP_PATH=\`rospack find roslisp\`
 if [ -z "\$ROSLISP_PATH" ]; then
   echo "roslisp not found"
   exit 1
 fi
-if [ -n "\$ROS_SBCL_PATH" ]; then
-  SBCL=$ROS_SBCL_PATH/scripts/run-sbcl.sh
-else
-  SBCL=sbcl
-fi
 
-ROSLISP_CURRENT_PACKAGE=$pkg \$SBCL --noinform --end-runtime-options --noprint --no-userinit --disable-debugger --load \$ROSLISP_PATH/scripts/roslisp-sbcl-init --load $output.lisp --end-toplevel-options \$*
+ROSLISP_CURRENT_PACKAGE=$pkg
+
+$SBCL_CMD --noinform --end-runtime-options --noprint --no-userinit --disable-debugger --load \$ROSLISP_PATH/scripts/roslisp-sbcl-init --load $output.lisp --end-toplevel-options \$*
 EOF
   chmod a+x $output
 else
-    echo "Usage: make_node_exec <pkg> <system> <entry> <output>"
-    exit 1
+  echo "Usage: make_node_exec <pkg> <system> <entry> <output>"
+  exit 1
 fi
