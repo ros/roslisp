@@ -2,6 +2,18 @@
 Changelog for package roslisp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.9.19 (2015-08-14)
+-----------
+* Merge pull request `#25 <https://github.com/ros/roslisp/issues/25>`_ from airballking/symbol-codes
+  roslisp-msg-protocol: looking up symbols from constants
+* Followed Gaya's suggestion of throwing an error if no symbol-code with the requested code can be found in (code-symbol ...).
+* Merge pull request `#26 <https://github.com/ros/roslisp/issues/26>`_ from gaya-/deprecated-quit
+  Replaced deprecated SB-EXT:QUIT with SB-EXT:EXIT
+* Merge pull request `#19 <https://github.com/ros/roslisp/issues/19>`_ from gaya-/master
+  Fixed the outdated executables generation pipeline
+* Replaced deprecated SB-EXT:QUIT with SB-EXT:EXIT
+* Contributors: Dirk Thomas, Gayane Kazhoyan, Georg Bartels
+
 1.9.17 (2014-10-02)
 -------------------
 * Merge pull request `#20 <https://github.com/ros/roslisp/issues/20>`_ from daewok/use_sim_time
