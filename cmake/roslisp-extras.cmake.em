@@ -70,9 +70,13 @@ function(add_lisp_executable output system_name entry_point)
     message(SEND_ERROR "[roslisp] add_lisp_executable can only have 3 arguments")
   endif()
 
+  if(output MATCHES "/")
+    message(WARNING "First argument of ADD_LISP_EXECUTABLE (${output}) cannot contain slashes! Ignoring.")
+    string(REPLACE "/" "_" output ${output})
+  endif()
+
   set(targetdir ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION})
   set(targetname _roslisp_${output})
-  string(REPLACE "/" "_" targetname ${targetname})
 
   # create directory if it does not exist
   file(MAKE_DIRECTORY ${targetdir})
