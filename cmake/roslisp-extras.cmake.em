@@ -11,7 +11,7 @@ set(ROSLISP_EXE_SCRIPT "@(CMAKE_CURRENT_SOURCE_DIR)/scripts/make_exe_script")
 # location of script in installspace
 set(ROSLISP_MAKE_NODE_BIN "${roslisp_DIR}/../scripts/make_node_exec")
 set(ROSLISP_COMPILE_MANIFEST_BIN "${roslisp_DIR}/../scripts/compile_load_manifest")
-set(ROSLISP_EXE_SCRIPT "${roslisp_DIR}/..//scripts/make_exe_script")
+set(ROSLISP_EXE_SCRIPT "${roslisp_DIR}/../scripts/make_exe_script")
 @[end if]@
 
 # Build up a list of executables, in order to make them depend on each
