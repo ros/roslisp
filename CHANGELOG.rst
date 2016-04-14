@@ -2,6 +2,14 @@
 Changelog for package roslisp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#28 <https://github.com/ros/roslisp/issues/28>`_ from gaya-/master
+  In ADD_LISP_EXECUTABLE added a check for slashes in first argument
+* in cmake script minor nicification
+* [cmake] in ADD_LISP_EXECUTABLE added a check for slashes in first argument
+* Contributors: Gayane Kazhoyan, Georg Bartels
+
 1.9.19 (2015-08-14)
 -----------
 * Merge pull request `#25 <https://github.com/ros/roslisp/issues/25>`_ from airballking/symbol-codes
