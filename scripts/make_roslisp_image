@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # make-roslisp-image IMAGE_NAME
 # Creates or overwrites a file IMAGE_NAME containing the Lisp image that includes Roslisp
 # Will be used as an intermediate file when making individual executables for ROS nodes
