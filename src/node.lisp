@@ -60,11 +60,16 @@ CMD-LINE-ARGS is the list of command line arguments (defaults to argv minus its 
   (unless (eq *node-status* :shutdown)
     (warn "Before starting node, node-status equalled ~a instead of :shutdown.  Shutting the previous node invocation down now." *node-status*)
     (shutdown-ros-node))
-  
+
   (when anonymous
     (mvbind (success s ms) (sb-unix:unix-gettimeofday)
       (declare (ignore success))
       (setq name (format nil "~a_~a_~a" name ms s))))
+
+  ;; check for legal base name once all changes have been made to the name
+  (unless (and (alpha-char-p (char name 0))
+               (every #'(lambda (c) (or (alphanumericp c) (equal c #\_))) name))
+    (warn "~a is not a legal ROS base name. This may cause problems with other ROS tools" name))
 
   (let ((params (handle-command-line-arguments name cmd-line-args)))
 
