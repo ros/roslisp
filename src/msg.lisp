@@ -346,26 +346,34 @@ which causes more consing and is less performant."
 	(apply #'set-fields-fn (make-instance class-name) args)))))
 
 (defun make-service-request-fn (srv-type &rest args)
-  (destructuring-bind (pkg type) (tokens (string-upcase srv-type) :separators '(#\/))
-    (let ((pkg (find-package (intern (concatenate 'string pkg "-SRV") 'keyword))))
-      (assert pkg nil "Can't find package ~a" pkg)
-      (let ((class-name (find-symbol (concatenate 'string type "-REQUEST") pkg)))
-	(assert class-name nil "Can't find class ~a in package ~a" class-name pkg)
-	(apply #'set-fields-fn (make-instance class-name) args)))))
+  (etypecase srv-type
+    (string
+     (destructuring-bind (pkg type) (tokens (string-upcase srv-type) :separators '(#\/))
+       (let ((pkg (find-package (intern (concatenate 'string pkg "-SRV") 'keyword))))
+         (assert pkg nil "Can't find package ~a" pkg)
+         (let ((class-name (find-symbol (concatenate 'string type "-REQUEST") pkg)))
+           (assert class-name nil "Can't find class ~a in package ~a" class-name pkg)
+           (apply #'set-fields-fn (make-instance class-name) args)))))
+    (symbol (apply #'set-fields-fn (make-instance (service-request-type srv-type)) args))))
 
 (defmacro make-request (srv-type &rest args)
   "make-request SRV-TYPE &rest ARGS
 
 Like make-message, but creates a service request object.  SRV-TYPE can be either a string of the form package_name/message_name, or a symbol naming the service (the name is the base name of the .srv file).  ARGS are as in make-message."
-  (etypecase srv-type
-    (string
-       `(make-service-request-fn ,srv-type
-				 ,@(loop
-				     for i from 0
-				     for arg in args
-				     collect (if (evenp i) `',arg arg))))
-    (symbol `(make-service-request ',srv-type ,@args))
-    (cons (assert (eql (car srv-type) 'quote)) `(make-service-request ,srv-type ,@args))))
+  `(make-service-request-fn ,(etypecase srv-type
+                               (string
+                                srv-type)
+                               (symbol
+                                (list 'quote srv-type))
+                               (cons
+                                (assert (eql (car srv-type) 'quote))
+                                srv-type))
+                            ,@(loop
+                                for i from 0
+                                for arg in args
+                                collect (if (evenp i) `',(mapcar
+                                                          #'convert-to-keyword
+                                                          (designated-list arg)) arg))))
 
 (defun make-service-request (service-type &rest args)
   (apply #'make-instance (service-request-type service-type) args))
