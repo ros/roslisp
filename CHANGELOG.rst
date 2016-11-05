@@ -11,7 +11,7 @@ Changelog for package roslisp
 * Contributors: Gayane Kazhoyan, Georg Bartels
 
 1.9.19 (2015-08-14)
------------
+-------------------
 * Merge pull request `#25 <https://github.com/ros/roslisp/issues/25>`_ from airballking/symbol-codes
   roslisp-msg-protocol: looking up symbols from constants
 * Followed Gaya's suggestion of throwing an error if no symbol-code with the requested code can be found in (code-symbol ...).
