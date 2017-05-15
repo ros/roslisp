@@ -280,8 +280,9 @@ Note that despite the name, this is not like with-accessors or with-slots in tha
                   (go :retry))))))))
 
 (defun run-and-increment-delay (l d)
-  (let ((next-time (+ #||(time-to-run l)||#
-                    (get-internal-real-time)
+  (let ((next-time (+ (if (< (time-to-run l) (get-internal-real-time))
+                          (get-internal-real-time)
+                        (time-to-run l))
                     (* d internal-time-units-per-second))))
     (wait-until-ready l)
     (set-next-real-time-to-run l next-time)))
