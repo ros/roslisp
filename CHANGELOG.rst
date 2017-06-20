@@ -2,8 +2,8 @@
 Changelog for package roslisp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.21 (2017-06-20)
+-------------------
 * Merge pull request `#33 <https://github.com/ros/roslisp/issues/33>`_ from gaya-/master
   Got rid of /bin/bash, using /usr/bin/env bash instead.
 * Merge pull request `#34 <https://github.com/ros/roslisp/issues/34>`_ from gaya-/check-node-name
