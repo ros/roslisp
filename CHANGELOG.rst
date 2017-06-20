@@ -2,6 +2,34 @@
 Changelog for package roslisp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#33 <https://github.com/ros/roslisp/issues/33>`_ from gaya-/master
+  Got rid of /bin/bash, using /usr/bin/env bash instead.
+* Merge pull request `#34 <https://github.com/ros/roslisp/issues/34>`_ from gaya-/check-node-name
+  Added a check on node name when creating a node
+* Merge pull request `#36 <https://github.com/ros/roslisp/issues/36>`_ from gaya-/arguments-in-make-request
+  Added support for nested message fields in MAKE-REQUEST
+  Fully backwards compatible, no API breakage.
+* Merge pull request `#35 <https://github.com/ros/roslisp/issues/35>`_ from gaya-/symbols-for-make-msg
+  Support for symbols in msg-type of make-message.
+  Fully backwards compatible, no API breakage.
+* Merge pull request `#39 <https://github.com/ros/roslisp/issues/39>`_ from Bradford-Miller/fix-loop-at-most
+  Fix bug in LOOP-AT-MOST-EVERY:
+  if the BODY takes too long the timer doesn't reset which results in BODY being called more frequently than at-most-every D.
+* this time for sure
+* fix issue `#38 <https://github.com/ros/roslisp/issues/38>`_
+* Merge pull request `#37 <https://github.com/ros/roslisp/issues/37>`_ from mikepurvis/patch-1
+  Fix changelog underline.
+* Fix changelog underline.
+* added support for nested message fields in MAKE-REQUEST:
+  previously nested field specification was only supported when making a request using a string as message type.
+  Now the same is also supported when specifying service type with a symbol.
+* MAKE-MESSAGE now accepts MSG-TYPE not only of type STRING but also SYMBOL
+* added a check on node name when creating a node
+* minor fix for a (probably not working anyway) script
+* Contributors: Gayane Kazhoyan, Georg Bartels, Mike Purvis, Bradford W. Miller (GE Global Research)
+
 1.9.20 (2016-04-14)
 -------------------
 * Merge pull request `#28 <https://github.com/ros/roslisp/issues/28>`_ from gaya-/master
