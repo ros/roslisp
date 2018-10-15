@@ -260,24 +260,30 @@ Note that despite the name, this is not like with-accessors or with-slots in tha
   ;; Sbcl's sleep does not respect deadlines which causes severe
   ;; problems with CRAM. We don't use it directly. We explicitly take
   ;; into account deadlines.
+  ;; NOTE (15.10.2018) SBCL's sleep does respect deadlines now
   (let* ((current-time (get-internal-real-time))
          (time-to-run (time-to-run l))
-         (deadline-seconds sb-impl::*deadline-seconds*)
-         (stop-time (- time-to-run current-time)))
+         ;; (deadline-seconds (when sb-impl::*deadline*
+         ;;                     (sb-impl::deadline-seconds sb-impl::*deadline*)))
+         (stop-time (- time-to-run current-time))
+         (sleep-time (/ stop-time internal-time-units-per-second)))
     (when (< current-time time-to-run)
-      (tagbody
-         :retry
-         (cond ((or (not deadline-seconds)
-                    (> deadline-seconds time-to-run))
-                (sleep (/ stop-time internal-time-units-per-second)))
-               (t
-                (sleep deadline-seconds)
-                (sb-sys:signal-deadline)
-                (setq deadline-seconds sb-impl::*deadline-seconds*)
-                (setf time-to-run (/ (float (- stop-time (get-internal-real-time)) 0.0d0)
-                                     (float internal-time-units-per-second 0.0d0)))
-                (when (plusp time-to-run)
-                  (go :retry))))))))
+      ;; (tagbody
+      ;;  :retry
+      ;;  (cond ((or (not deadline-seconds)
+      ;;             (> deadline-seconds time-to-run))
+      ;;         (sleep (/ stop-time internal-time-units-per-second)))
+      ;;        (t
+      ;;         (sleep deadline-seconds)
+      ;;         (sb-sys:signal-deadline)
+      ;;         (setq deadline-seconds
+      ;;               (when sb-impl::*deadline*
+      ;;                 (sb-impl::deadline-seconds sb-impl::*deadline*)))
+      ;;         (setf time-to-run (/ (float (- stop-time (get-internal-real-time)) 0.0d0)
+      ;;                              (float internal-time-units-per-second 0.0d0)))
+      ;;         (when (plusp time-to-run)
+      ;;           (go :retry)))))
+      (sleep sleep-time))))
 
 (defun run-and-increment-delay (l d)
   (let ((next-time (+ (if (< (time-to-run l) (get-internal-real-time))
