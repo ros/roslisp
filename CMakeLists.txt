@@ -20,9 +20,6 @@ foreach(dir
       PATTERN "genmsg_lisp.py" EXCLUDE)
 endforeach()
 
-# install legacy infrastructure needed by rosbuild
-install(FILES manifest.xml
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 install(DIRECTORY scripts
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
     USE_SOURCE_PERMISSIONS
