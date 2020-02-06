@@ -4,7 +4,7 @@ project(roslisp)
 find_package(catkin REQUIRED)
 catkin_package(CFG_EXTRAS roslisp-extras.cmake)
 
-add_subdirectory(env-hooks)
+catkin_add_env_hooks(99.roslisp SHELLS sh DIRECTORY ${PROJECT_SOURCE_DIR}/env-hooks)
 
 foreach(dir
     load-manifest
