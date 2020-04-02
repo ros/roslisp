@@ -140,7 +140,7 @@ expires, deletes the file."
   (merge-pathnames (make-pathname
                     :name (concatenate 'string
                                        ".roslisp-compile-"
-                                       (asdf:component-name component)))
+                                       (substitute #\_ #\/ (asdf:component-name component))))
                    (ros-home)))
 
 (defmethod asdf:perform :around ((op asdf:compile-op) component)
