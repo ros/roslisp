@@ -1,6 +1,6 @@
 <package>
   <name>roslisp</name>
-  <version>1.9.24</version>
+  <version>1.9.25</version>
   <description>Lisp client library for ROS, the Robot Operating System.</description>
   <maintainer email="kazhoyan@cs.uni-bremen.de">Gayane Kazhoyan</maintainer>
   <license>BSD</license>
